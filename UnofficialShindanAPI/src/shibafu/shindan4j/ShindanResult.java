@@ -1,4 +1,4 @@
-package shibafu.unofficialshindanapi;
+package shibafu.shindan4j;
 
 /**
  * 診断メーカーでの診断結果が詰まってる

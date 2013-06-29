@@ -3,10 +3,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import shibafu.unofficialshindanapi.ShindanList;
-import shibafu.unofficialshindanapi.ShindanPage;
-import shibafu.unofficialshindanapi.ShindanResult;
-import shibafu.unofficialshindanapi.ShindanSummary;
+import shibafu.shindan4j.ShindanList;
+import shibafu.shindan4j.ShindanPage;
+import shibafu.shindan4j.ShindanResult;
+import shibafu.shindan4j.ShindanSummary;
 
 
 public class Tester {

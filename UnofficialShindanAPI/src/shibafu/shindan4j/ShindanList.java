@@ -1,4 +1,4 @@
-package shibafu.unofficialshindanapi;
+package shibafu.shindan4j;
 
 import java.io.IOException;
 import java.util.ArrayList;
