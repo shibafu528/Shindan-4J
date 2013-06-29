@@ -2,6 +2,11 @@ package shibafu.shindan4j;
 
 import java.util.List;
 
+/**
+ * 検索結果から取得できるデータが詰まってる
+ * @author Shibafu
+ *
+ */
 public class ShindanSummary {
 	protected String PageURL;
 	protected String Name;
