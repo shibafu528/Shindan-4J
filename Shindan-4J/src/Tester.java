@@ -31,6 +31,7 @@ public class Tester {
 			//情報出力
 			System.out.println("\nタイトル: " + page.getTitle());
 			System.out.println("説明: " + page.getDescription());
+			System.out.println("作者: " + page.getAuthor());
 			System.out.println("テーマラベル: ");
 			for (String s : page.getThemeLabel()) {
 				System.out.println(s);

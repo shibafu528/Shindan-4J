@@ -26,13 +26,16 @@ public class ShindanPage {
 	protected List<String> LinkedPage = new ArrayList<String>();
 	//テーマラベル
 	protected List<String> ThemeLabel = new ArrayList<String>();
+	//作者
+	protected String Author;
 
-	public ShindanPage(String title, String desc, String url, List<String> link, List<String> theme) {
+	public ShindanPage(String title, String desc, String url, List<String> link, List<String> theme, String author) {
 		this.Title = title;
 		this.Description = desc;
 		this.PageURL = url;
 		this.LinkedPage = link;
 		this.ThemeLabel = theme;
+		this.Author = author;
 	}
 
 	/**
@@ -55,6 +58,9 @@ public class ShindanPage {
 		for (Element e : themes) {
 			theme.add(e.text());
 		}
+		//作者名を取得
+		Elements elemAuthor = doc.select("a[href^=/author/]");
+		String author = ((elemAuthor != null)? elemAuthor.select("a").text() : null);
 		//説明文の接尾辞を削除する
 		desc = desc.substring(0, desc.length() - 9);
 		String regex = "(http://shindanmaker.com/\\d+)";
@@ -68,7 +74,7 @@ public class ShindanPage {
 		//説明文からURLを除去する
 		desc = desc.replaceAll(regex, "◆");
 		//インスタンスを生成して返す
-		return new ShindanPage(title, desc, url, matchedlink, theme);
+		return new ShindanPage(title, desc, url, matchedlink, theme, author);
 	}
 
 	/**
@@ -105,6 +111,10 @@ public class ShindanPage {
 
 	public List<String> getThemeLabel() {
 		return ThemeLabel;
+	}
+
+	public String getAuthor() {
+		return Author;
 	}
 
 }
