@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="UnofficialShindanAPI/UnofficialShindanAPI.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/UnofficialShindanAPI/export.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="Shindan-4J/shindan4j.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/Shindan-4J/export.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
@@ -11,8 +11,9 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=UnofficialShindanAPI/src&lt;shibafu.unofficialshindanapi"/>
-        <file path="/UnofficialShindanAPI/.project"/>
-        <file path="/UnofficialShindanAPI/.classpath"/>
+        <file path="/Shindan-4J/export.jardesc"/>
+        <file path="/Shindan-4J/.project"/>
+        <javaElement handleIdentifier="=Shindan-4J/src&lt;shibafu.shindan4j"/>
+        <file path="/Shindan-4J/.classpath"/>
     </selectedElements>
 </jardesc>

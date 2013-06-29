@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
@@ -23,12 +24,15 @@ public class ShindanPage {
 	protected String PageURL; //診断ページのURL
 	//診断リンクリスト
 	protected List<String> LinkedPage = new ArrayList<String>();
+	//テーマラベル
+	protected List<String> ThemeLabel = new ArrayList<String>();
 
-	public ShindanPage(String title, String desc, String url, List<String> link) {
+	public ShindanPage(String title, String desc, String url, List<String> link, List<String> theme) {
 		this.Title = title;
 		this.Description = desc;
 		this.PageURL = url;
 		this.LinkedPage = link;
+		this.ThemeLabel = theme;
 	}
 
 	/**
@@ -45,6 +49,12 @@ public class ShindanPage {
 		//タイトル、説明文を取得
 		String title = meta.select("*[property=og:title]").first().attr("content");
 		String desc = meta.select("*[property=og:description]").first().attr("content");
+		//テーマラベルを取得
+		List<String> theme = new ArrayList<String>();
+		Elements themes = doc.select("a[class=themelabel]");
+		for (Element e : themes) {
+			theme.add(e.text());
+		}
 		//説明文の接尾辞を削除する
 		desc = desc.substring(0, desc.length() - 9);
 		String regex = "(http://shindanmaker.com/\\d+)";
@@ -58,7 +68,7 @@ public class ShindanPage {
 		//説明文からURLを除去する
 		desc = desc.replaceAll(regex, "◆");
 		//インスタンスを生成して返す
-		return new ShindanPage(title, desc, url, matchedlink);
+		return new ShindanPage(title, desc, url, matchedlink, theme);
 	}
 
 	/**
@@ -91,6 +101,10 @@ public class ShindanPage {
 
 	public List<String> getLinkedPage() {
 		return LinkedPage;
+	}
+
+	public List<String> getThemeLabel() {
+		return ThemeLabel;
 	}
 
 }
