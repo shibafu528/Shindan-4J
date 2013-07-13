@@ -44,9 +44,9 @@ public class ShindanList {
 	// プライベートフィールド
 	//
 
-	private String QueryMode;
-	private int QueryPage;
-	private List<ShindanSummary> Results;
+	private String QueryMode; //最後に使用された取得モード
+	private int QueryPage; //最後に取得したページ
+	private List<ShindanSummary> Results; //
 
 	public String getQueryMode() {
 		return QueryMode;
@@ -71,7 +71,32 @@ public class ShindanList {
 		QueryPage = queryPage;
 		Results = results;
 	}
+	
+	
+	//
+	// インスタンスメソッド
+	
+	/**
+	 * ページカウントを1つ進めて、次のページの要素を取得します。<br>
+	 * @return 新たに取得した要素の数。IO例外等が発生した場合は-1が返る。
+	 */
+	public int getNextPage() {
+		try {
+			//GETを行う
+			Document doc = Jsoup.connect(getQuery(QueryMode, ++QueryPage))
+					.timeout(20000).get();
+			//ドキュメントから要素を抽出する
+			List<ShindanSummary> summaries = getListElements(doc);
+			//Resultsリストに追加する
+			Results.addAll(summaries);
+			//取得した要素の数を返す
+			return summaries.size();
+		} catch (IOException e) {
+			return -1;
+		}
+	}
 
+	
 	//
 	// スタティックメソッド
 	//
@@ -98,9 +123,21 @@ public class ShindanList {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ShindanList getShindanList(String mode, int page) throws IOException {
+	public static ShindanList getPage(String mode, int page) throws IOException {
 		//GETを行う
 		Document doc = Jsoup.connect(getQuery(mode, page)).timeout(20000).get();
+		//ドキュメントから要素を抽出する
+		List<ShindanSummary> summaries = getListElements(doc);
+		//結果インスタンスを生成して返す
+		return new ShindanList(mode, page, summaries);
+	}
+	
+	/**
+	 * 引数に渡したドキュメントから、診断メーカーのリストページ内要素"list_list"を抽出します
+	 * @param doc 抽出対象のドキュメント
+	 * @return 抽出されたリスト要素
+	 */
+	public static List<ShindanSummary> getListElements(Document doc) {
 		//要素リストを作成
 		List<ShindanSummary> summaries = new ArrayList<ShindanSummary>();
 		//リストの各要素の親をとる
@@ -140,7 +177,6 @@ public class ShindanList {
 			//インスタンス作って要素リストに格納
 			summaries.add(new ShindanSummary(url, title, counter, author, hashtag, themelabel, desc));
 		}
-		//結果インスタンスを生成して返す
-		return new ShindanList(mode, page, summaries);
+		return summaries;
 	}
 }
