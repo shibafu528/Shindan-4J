@@ -38,6 +38,8 @@ public class ShindanList {
 	public static final String MODE_PICTURE = "pic";
 	/** 取得モード: 動画系診断 */
 	public static final String MODE_MOVIE = "mov";
+	/** 取得モード: 診断検索 */
+	public static final String MODE_SEARCH = "search";
 
 
 	//
@@ -46,7 +48,9 @@ public class ShindanList {
 
 	private String QueryMode; //最後に使用された取得モード
 	private int QueryPage; //最後に取得したページ
-	private List<ShindanSummary> Results; //
+	private String SearchWord; //検索ワード
+	private boolean SearchOrderByNew; //検索ソートを新着順にするか
+	private List<ShindanSummary> Results; //取得したデータのリスト
 
 	public String getQueryMode() {
 		return QueryMode;
@@ -60,7 +64,15 @@ public class ShindanList {
 		return Results;
 	}
 
+	public String getSearchWord() {
+		return SearchWord;
+	}
 
+	public boolean isSearchOrderByNew() {
+		return SearchOrderByNew;
+	}
+	
+	
 	//
 	// コンストラクタ
 	//
@@ -69,6 +81,16 @@ public class ShindanList {
 			List<ShindanSummary> results) {
 		QueryMode = queryMode;
 		QueryPage = queryPage;
+		Results = results;
+	}
+	
+	public ShindanList(String searchWord, int queryPage,
+			boolean orderByNew,
+			List<ShindanSummary> results) {
+		QueryMode = MODE_SEARCH;
+		QueryPage = queryPage;
+		SearchWord = searchWord;
+		SearchOrderByNew = orderByNew;
 		Results = results;
 	}
 	
@@ -102,7 +124,7 @@ public class ShindanList {
 	//
 
 	/**
-	 * クエリを付加したlistページのURLを取得します
+	 * パラメータを付加したlistページのURLを取得します
 	 * @param mode 取得モード
 	 * @param page 取得するページ(1～)
 	 * @return listページURL
@@ -113,6 +135,27 @@ public class ShindanList {
 		sb.append(mode);
 		sb.append("&p=");
 		sb.append(page);
+		return sb.toString();
+	}
+	
+	/**
+	 * パラメータを付加した検索ページのURLを取得します
+	 * @param searchWord 検索ワード
+	 * @param page 取得するページ(1～)
+	 * @param orderByNew 新着順で検索する (falseの場合は人気順)
+	 * @return listページURL
+	 */
+	private static String getSearchQuery(String searchWord, int page, boolean orderByNew) {
+		StringBuilder sb = new StringBuilder(LISTPAGE_URL);
+		sb.append("mode=");
+		sb.append(MODE_SEARCH);
+		sb.append("&q=");
+		sb.append(searchWord);
+		sb.append("&p=");
+		sb.append(page);
+		if (orderByNew) {
+			sb.append("&order=new");
+		}
 		return sb.toString();
 	}
 
@@ -130,6 +173,23 @@ public class ShindanList {
 		List<ShindanSummary> summaries = getListElements(doc);
 		//結果インスタンスを生成して返す
 		return new ShindanList(mode, page, summaries);
+	}
+	
+	/**
+	 * 診断メーカーの検索ページにクエリをPOSTし、検索結果を取得します
+	 * @param searchWord 検索ワード
+	 * @param page ページ数 -- 何ページ目を取得するか指定 (1以上の整数)
+	 * @param orderByNew 新着順で検索する (falseの場合は人気順)
+	 * @return
+	 * @throws IOException
+	 */
+	public static ShindanList getSearchPage(String searchWord, int page, boolean orderByNew) throws IOException {
+		//GETを行う
+		Document doc = Jsoup.connect(getSearchQuery(searchWord, page, orderByNew)).timeout(20000).get();
+		//ドキュメントから要素を抽出する
+		List<ShindanSummary> summaries = getListElements(doc);
+		//結果インスタンスを生成して返す
+		return new ShindanList(searchWord, page, orderByNew, summaries);
 	}
 	
 	/**
