@@ -1,6 +1,8 @@
 package shibafu.shindan4j;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -144,13 +146,15 @@ public class ShindanList {
 	 * @param page 取得するページ(1～)
 	 * @param orderByNew 新着順で検索する (falseの場合は人気順)
 	 * @return listページURL
+	 * @throws UnsupportedEncodingException 検索ワードのURLエンコードに失敗した場合にスロー
 	 */
-	private static String getSearchQuery(String searchWord, int page, boolean orderByNew) {
+	private static String getSearchQuery(String searchWord, int page, boolean orderByNew)
+			throws UnsupportedEncodingException {
 		StringBuilder sb = new StringBuilder(LISTPAGE_URL);
 		sb.append("mode=");
 		sb.append(MODE_SEARCH);
 		sb.append("&q=");
-		sb.append(searchWord);
+		sb.append(URLEncoder.encode(searchWord, "utf-8"));
 		sb.append("&p=");
 		sb.append(page);
 		if (orderByNew) {
