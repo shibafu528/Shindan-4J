@@ -1,5 +1,9 @@
 package shibafu.shindan4j;
 
+import java.util.List;
+
+import shibafu.common.StringHelper;
+
 /**
  * 診断メーカーでの診断結果が詰まってる
  * @author Shibafu
@@ -14,6 +18,8 @@ public class ShindanResult {
 	protected String DisplayResult;
 	//診断結果(共有用)
 	protected String ShareResult;
+	//画像診断の結果URL
+	protected List<String> ResultImageUrl;
 
 	public ShindanResult(ShindanPage page, String name, String display, String share) {
 		this.Page = page;
@@ -36,5 +42,9 @@ public class ShindanResult {
 
 	public String getShareResult() {
 		return ShareResult;
+	}
+	
+	private void extractImageUrl() {
+		String[] urls = StringHelper.extractURL(DisplayResult);
 	}
 }

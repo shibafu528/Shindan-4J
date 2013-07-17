@@ -42,6 +42,8 @@ public class ShindanList {
 	public static final String MODE_MOVIE = "mov";
 	/** 取得モード: 診断検索 */
 	public static final String MODE_SEARCH = "search";
+	/** 取得モード: テーマ検索 */
+	public static final String MODE_THEME = "tag";
 
 
 	//
@@ -86,10 +88,11 @@ public class ShindanList {
 		Results = results;
 	}
 	
-	public ShindanList(String searchWord, int queryPage,
+	public ShindanList(String queryMode,
+			String searchWord, int queryPage,
 			boolean orderByNew,
 			List<ShindanSummary> results) {
-		QueryMode = MODE_SEARCH;
+		QueryMode = queryMode;
 		QueryPage = queryPage;
 		SearchWord = searchWord;
 		SearchOrderByNew = orderByNew;
@@ -162,6 +165,29 @@ public class ShindanList {
 		}
 		return sb.toString();
 	}
+	
+	/**
+	 * パラメータを付加したテーマ検索ページのURLを取得します
+	 * @param searchTheme 検索テーマ
+	 * @param page 取得するページ(1～)
+	 * @param orderByNew 新着順で検索する (falseの場合は人気順)
+	 * @return listページURL
+	 * @throws UnsupportedEncodingException 検索ワードのURLエンコードに失敗した場合にスロー
+	 */
+	private static String getThemeSearchQuery(String searchTheme, int page, boolean orderByNew) 
+			throws UnsupportedEncodingException {
+		StringBuilder sb = new StringBuilder(LISTPAGE_URL);
+		sb.append("mode=");
+		sb.append(MODE_THEME);
+		sb.append("&tag=");
+		sb.append(URLEncoder.encode(searchTheme, "utf-8"));
+		sb.append("&p=");
+		sb.append(page);
+		if (orderByNew) {
+			sb.append("&order=new");
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * 診断メーカーのランキングページ等から、診断の一覧を取得します
@@ -187,13 +213,32 @@ public class ShindanList {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ShindanList getSearchPage(String searchWord, int page, boolean orderByNew) throws IOException {
+	public static ShindanList getSearchPage(
+			String searchWord, int page, boolean orderByNew) throws IOException {
 		//GETを行う
 		Document doc = Jsoup.connect(getSearchQuery(searchWord, page, orderByNew)).timeout(20000).get();
 		//ドキュメントから要素を抽出する
 		List<ShindanSummary> summaries = getListElements(doc);
 		//結果インスタンスを生成して返す
-		return new ShindanList(searchWord, page, orderByNew, summaries);
+		return new ShindanList(MODE_SEARCH, searchWord, page, orderByNew, summaries);
+	}
+	
+	/**
+	 * 診断メーカーのテーマ検索ページにクエリをPOSTし、検索結果を取得します
+	 * @param searchTheme 検索テーマ
+	 * @param page ページ数 -- 何ページ目を取得するか指定 (1以上の整数)
+	 * @param orderByNew 新着順で検索する (falseの場合は人気順)
+	 * @return
+	 * @throws IOException
+	 */
+	public static ShindanList getThemeSearchPage(
+			String searchTheme, int page, boolean orderByNew) throws IOException {
+		//GETを行う
+		Document doc = Jsoup.connect(getThemeSearchQuery(searchTheme, page, orderByNew)).timeout(20000).get();
+		//ドキュメントから要素を抽出する
+		List<ShindanSummary> summaries = getListElements(doc);
+		//結果インスタンスを生成して返す
+		return new ShindanList(MODE_THEME, searchTheme, page, orderByNew, summaries);
 	}
 	
 	/**
