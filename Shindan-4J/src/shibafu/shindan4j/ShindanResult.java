@@ -1,8 +1,10 @@
 package shibafu.shindan4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import shibafu.common.StringHelper;
+import shibafu.common.TweetImageUrl;
 
 /**
  * 診断メーカーでの診断結果が詰まってる
@@ -19,13 +21,14 @@ public class ShindanResult {
 	//診断結果(共有用)
 	protected String ShareResult;
 	//画像診断の結果URL
-	protected List<String> ResultImageUrl;
+	protected List<LinkImage> ResultImageUrl = new ArrayList<LinkImage>();
 
 	public ShindanResult(ShindanPage page, String name, String display, String share) {
 		this.Page = page;
 		this.Name = name;
 		this.DisplayResult = display;
 		this.ShareResult = share;
+		extractImageUrl();
 	}
 
 	public ShindanPage getPage() {
@@ -44,7 +47,30 @@ public class ShindanResult {
 		return ShareResult;
 	}
 	
+	public List<LinkImage> getResultImageUrl() {
+		return ResultImageUrl;
+	}
+
 	private void extractImageUrl() {
+		//診断結果から全てのURLを抽出
 		String[] urls = StringHelper.extractURL(DisplayResult);
+		//それらを画像URLであるか総当たり判定
+		for (String url : urls) {
+			String fullImg = TweetImageUrl.getFullImageUrl(url);
+			if (fullImg != null) {
+				//画像URLが取得出来たらリストに追加
+				ResultImageUrl.add(new LinkImage(url, fullImg));
+			}
+		}
+	}
+	
+	public static class LinkImage {
+		public String Url;
+		public String FullImageUrl;
+		
+		public LinkImage(String url, String fullImageUrl) {
+			Url = url;
+			FullImageUrl = fullImageUrl;
+		}
 	}
 }
