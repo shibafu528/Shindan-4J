@@ -1,4 +1,4 @@
-package shibafu.common;
+package shibafu.shindan4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,9 @@ import java.util.regex.Pattern;
 public class TweetImageUrl {
 	
 	private static final ImageMatch[] pattern = {
-		new ImageMatch("http://twitpic\\.com/([a-zA-Z0-9]+)", "http://twitpic.com/show/full/%1")
+		new ImageMatch("http://twitpic\\.com/([a-zA-Z0-9]+)", "http://twitpic.com/show/full/%1"),
+		new ImageMatch("http://yfrog\\.com/([a-zA-Z0-9]+)", "http://yfrog.com/%1:medium"),
+		new ImageMatch("http://p\\.twipple\\.jp/([a-zA-Z0-9]+)", "http://p.twpl.jp/show/orig/%1")
 	};
 	
 	private static class ImageMatch implements Cloneable{

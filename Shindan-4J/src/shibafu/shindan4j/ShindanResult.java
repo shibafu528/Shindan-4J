@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shibafu.common.StringHelper;
-import shibafu.common.TweetImageUrl;
 
 /**
  * 診断メーカーでの診断結果が詰まってる
