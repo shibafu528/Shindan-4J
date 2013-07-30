@@ -74,7 +74,11 @@ public class AuthorPage extends ShindanList{
 			//ドキュメントから要素を抽出する
 			List<ShindanSummary> summaries = ShindanList.getListElements(doc);
 			//Resultsリストに追加する
-			Results.addAll(summaries);
+			for (ShindanSummary ss : summaries) {
+				if (!Results.contains(ss)) {
+					Results.add(ss);
+				}
+			}
 			//取得した要素の数を返す
 			return summaries.size();
 		} catch (IOException e) {

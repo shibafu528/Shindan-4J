@@ -56,4 +56,24 @@ public class ShindanSummary {
 		return Description;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		if (((ShindanSummary)obj).PageURL.equals(this.PageURL))
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	public int hashCode() {
+		String[] s = PageURL.split("/");
+		return Integer.parseInt(s[s.length - 1]);
+	}
+
 }
