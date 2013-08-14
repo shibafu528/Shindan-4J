@@ -14,7 +14,6 @@
         <file path="/Shindan-4J/export.jardesc"/>
         <file path="/Shindan-4J/.project"/>
         <javaElement handleIdentifier="=Shindan-4J/src&lt;shibafu.shindan4j"/>
-        <javaElement handleIdentifier="=Shindan-4J/src&lt;shibafu.common"/>
         <file path="/Shindan-4J/.classpath"/>
     </selectedElements>
 </jardesc>

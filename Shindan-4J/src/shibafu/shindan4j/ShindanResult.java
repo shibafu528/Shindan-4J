@@ -3,8 +3,6 @@ package shibafu.shindan4j;
 import java.util.ArrayList;
 import java.util.List;
 
-import shibafu.common.StringHelper;
-
 /**
  * 診断メーカーでの診断結果が詰まってる
  * @author Shibafu

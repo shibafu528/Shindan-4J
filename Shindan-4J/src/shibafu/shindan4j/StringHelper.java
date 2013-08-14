@@ -1,4 +1,4 @@
-package shibafu.common;
+package shibafu.shindan4j;
 
 import java.util.ArrayList;
 import java.util.List;
