@@ -22,6 +22,7 @@ public class ShindanPage {
 	protected String Description; //診断の説明文
 	//各種処理用
 	protected String PageURL; //診断ページのURL
+	protected String PostURL; //POST先URL
 	//診断リンクリスト
 	protected List<String> LinkedPage = new ArrayList<String>();
 	//テーマラベル
@@ -29,10 +30,11 @@ public class ShindanPage {
 	//作者
 	protected String Author;
 
-	public ShindanPage(String title, String desc, String url, List<String> link, List<String> theme, String author) {
+	public ShindanPage(String title, String desc, String url, String post, List<String> link, List<String> theme, String author) {
 		this.Title = title;
 		this.Description = desc;
 		this.PageURL = url;
+		this.PostURL = post;
 		this.LinkedPage = link;
 		this.ThemeLabel = theme;
 		this.Author = author;
@@ -52,6 +54,9 @@ public class ShindanPage {
 		//タイトル、説明文を取得
 		String title = meta.select("*[property=og:title]").first().attr("content");
 		String desc = meta.select("*[property=og:description]").first().attr("content");
+		//POST先URLを取得
+		String post = doc.select("form[id=form]").first().attr("action");
+		post = "http://shindanmaker.com" + post;
 		//テーマラベルを取得
 		List<String> theme = new ArrayList<String>();
 		Elements themes = doc.select("a[class=themelabel]");
@@ -74,7 +79,7 @@ public class ShindanPage {
 		//説明文からURLを除去する
 		desc = desc.replaceAll(regex, "◆");
 		//インスタンスを生成して返す
-		return new ShindanPage(title, desc, url, matchedlink, theme, author);
+		return new ShindanPage(title, desc, url, post, matchedlink, theme, author);
 	}
 
 	/**
@@ -85,18 +90,18 @@ public class ShindanPage {
 	 */
 	public ShindanResult requestResult(String name) throws IOException {
 		//POSTを行う
-		Document doc = Jsoup.connect(PageURL).data("u", name).timeout(20000).post();
+		Document doc = Jsoup.connect(PostURL).data("u", name).timeout(20000).post();
 		//結果を取得
-		Elements displayElem = doc.select("meta[property=me2:post_body]");
+		Element displayElem = doc.select("meta[property=me2:post_body]").first();
 		if (displayElem == null) {
-			throw new IOException("meta[property=me2:post_body]がHTML上に見つかりません");
+			throw new IOException("meta[property=me2:post_body]がHTML上に見つかりません\nURL:" + PageURL);
 		}
-		String display = displayElem.first().attr("content");
-		Elements shareElem = doc.select("textarea[onclick=this.focus();this.select()]");
+		String display = displayElem.attr("content");
+		Element shareElem = doc.select("textarea[onclick=this.focus();this.select()]").first();
 		if (shareElem == null) {
-			throw new IOException("textarea[onclick=this.focus();this.select()]がHTML上に見つかりません");
+			throw new IOException("textarea[onclick=this.focus();this.select()]がHTML上に見つかりません\nURL:" + PageURL);
 		}
-		String share = shareElem.first().text();
+		String share = shareElem.text();
 		//結果インスタンスを生成して返す
 		return new ShindanResult(this, name, display, share);
 	}
@@ -111,6 +116,10 @@ public class ShindanPage {
 
 	public String getPageURL() {
 		return PageURL;
+	}
+	
+	public String getPostURL() {
+		return PostURL;
 	}
 
 	public List<String> getLinkedPage() {
