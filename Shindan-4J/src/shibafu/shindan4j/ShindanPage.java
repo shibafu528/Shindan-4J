@@ -87,8 +87,16 @@ public class ShindanPage {
 		//POSTを行う
 		Document doc = Jsoup.connect(PageURL).data("u", name).timeout(20000).post();
 		//結果を取得
-		String display = doc.select("meta[property=me2:post_body]").first().attr("content");
-		String share = doc.select("textarea[onclick=this.focus();this.select()]").first().text();
+		Elements displayElem = doc.select("meta[property=me2:post_body]");
+		if (displayElem == null) {
+			throw new IOException("meta[property=me2:post_body]がHTML上に見つかりません");
+		}
+		String display = displayElem.first().attr("content");
+		Elements shareElem = doc.select("textarea[onclick=this.focus();this.select()]");
+		if (shareElem == null) {
+			throw new IOException("textarea[onclick=this.focus();this.select()]がHTML上に見つかりません");
+		}
+		String share = shareElem.first().text();
 		//結果インスタンスを生成して返す
 		return new ShindanResult(this, name, display, share);
 	}
