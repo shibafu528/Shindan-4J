@@ -92,11 +92,11 @@ public class ShindanPage {
 		//POSTを行う
 		Document doc = Jsoup.connect(PostURL).data("u", name).timeout(20000).post();
 		//結果を取得
-		Element displayElem = doc.select("meta[property=me2:post_body]").first();
+		Element displayElem = doc.select("div[class=result]").first();
 		if (displayElem == null) {
-			throw new IOException("meta[property=me2:post_body]がHTML上に見つかりません\nURL:" + PageURL);
+			throw new IOException("div[class=result]がHTML上に見つかりません\nURL:" + PageURL);
 		}
-		String display = displayElem.attr("content");
+		String display = displayElem.children().first().html().replaceAll("<br.*>\\s?", "");
 		Element shareElem = doc.select("textarea[onclick=this.focus();this.select()]").first();
 		if (shareElem == null) {
 			throw new IOException("textarea[onclick=this.focus();this.select()]がHTML上に見つかりません\nURL:" + PageURL);
