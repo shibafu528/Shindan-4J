@@ -1,5 +1,6 @@
 package shibafu.shindan4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,9 @@ import java.util.List;
  * @author Shibafu
  *
  */
-public class ShindanResult {
+public class ShindanResult implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	//行った診断のページ
 	protected ShindanPage Page;
 	//診断に使用した名前

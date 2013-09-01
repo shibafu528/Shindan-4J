@@ -1,5 +1,6 @@
 package shibafu.shindan4j;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,9 @@ import java.util.List;
  * @author Shibafu
  *
  */
-public class ShindanSummary {
+public class ShindanSummary implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	protected String PageURL;
 	protected String Name;
 	protected int Counter;

@@ -1,6 +1,7 @@
 package shibafu.shindan4j;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,7 +17,9 @@ import org.jsoup.select.Elements;
  * @author Shibafu
  *
  */
-public class ShindanPage {
+public class ShindanPage implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	//診断概要
 	protected String Title; //診断タイトル
 	protected String Description; //診断の説明文
