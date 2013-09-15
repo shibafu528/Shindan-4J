@@ -66,14 +66,24 @@ public class AuthorPage extends ShindanList{
 	 * ページカウントを1つ進めて、次のページの要素を取得します。<br>
 	 * @return 新たに取得した要素の数。IO例外等が発生した場合は-1が返る。
 	 */
-	public ShindanList getNextPage() throws IOException{
-		//GETを行う
-		Document doc = Jsoup.connect(getQuery(Author, QueryMode, ++QueryPage))
-				.timeout(20000).get();
-		//ドキュメントから要素を抽出する
-		List<ShindanSummary> summaries = ShindanList.getListElements(doc);
-		//次のページを格納したオブジェクトを返す
-		return new AuthorPage(Author, QueryMode, QueryPage, summaries);
+	public int getNextPage() {
+		try {
+			//GETを行う
+			Document doc = Jsoup.connect(getQuery(Author, QueryMode, ++QueryPage))
+					.timeout(20000).get();
+			//ドキュメントから要素を抽出する
+			List<ShindanSummary> summaries = ShindanList.getListElements(doc);
+			//Resultsリストに追加する
+			for (ShindanSummary ss : summaries) {
+				if (!Results.contains(ss)) {
+					Results.add(ss);
+				}
+			}
+			//取得した要素の数を返す
+			return summaries.size();
+		} catch (IOException e) {
+			return -1;
+		}
 	}
 
 	//
