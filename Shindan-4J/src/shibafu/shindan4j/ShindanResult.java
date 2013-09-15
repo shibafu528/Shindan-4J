@@ -64,7 +64,9 @@ public class ShindanResult implements Serializable{
 		}
 	}
 	
-	public static class LinkImage {
+	public static class LinkImage implements Serializable{
+		private static final long serialVersionUID = 1L;
+		
 		public String Url;
 		public String FullImageUrl;
 		
