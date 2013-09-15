@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -96,17 +95,12 @@ public class ShindanPage implements Serializable {
 		//POSTを行う
 		Document doc = Jsoup.connect(PostURL).data("u", name).timeout(20000).post();
 		//結果を取得
-		Element displayElem = doc.select("div[class=result]").first();
-		if (displayElem == null) {
-			throw new IOException("div[class=result]がHTML上に見つかりません\nURL:" + PageURL);
-		}
-		String display = displayElem.children().first().html().replaceAll("<br.*>\\s?", "");
-		display = StringEscapeUtils.unescapeHtml4(display);
 		Element shareElem = doc.select("textarea[onclick=this.focus();this.select()]").first();
 		if (shareElem == null) {
 			throw new IOException("textarea[onclick=this.focus();this.select()]がHTML上に見つかりません\nURL:" + PageURL);
 		}
 		String share = shareElem.text();
+		String display = share.replaceAll("[ \n]" + PageURL + "$", "");
 		//結果インスタンスを生成して返す
 		return new ShindanResult(this, name, display, share);
 	}
