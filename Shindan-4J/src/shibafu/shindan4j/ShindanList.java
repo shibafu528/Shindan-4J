@@ -107,24 +107,14 @@ public class ShindanList {
 	 * ページカウントを1つ進めて、次のページの要素を取得します。<br>
 	 * @return 新たに取得した要素の数。IO例外等が発生した場合は-1が返る。
 	 */
-	public int getNextPage() {
-		try {
-			//GETを行う
-			Document doc = Jsoup.connect(getQuery(QueryMode, ++QueryPage))
-					.timeout(20000).get();
-			//ドキュメントから要素を抽出する
-			List<ShindanSummary> summaries = getListElements(doc);
-			//Resultsリストに追加する
-			for (ShindanSummary ss : summaries) {
-				if (!Results.contains(ss)) {
-					Results.add(ss);
-				}
-			}
-			//取得した要素の数を返す
-			return summaries.size();
-		} catch (IOException e) {
-			return -1;
-		}
+	public ShindanList getNextPage() throws IOException{
+		//GETを行う
+		Document doc = Jsoup.connect(getQuery(QueryMode, ++QueryPage))
+				.timeout(20000).get();
+		//ドキュメントから要素を抽出する
+		List<ShindanSummary> summaries = getListElements(doc);
+		//次のページを格納したオブジェクトを返す
+		return new ShindanList(QueryMode, SearchWord, QueryPage, SearchOrderByNew, summaries);
 	}
 
 	
