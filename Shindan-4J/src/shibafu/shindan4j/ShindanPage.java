@@ -55,8 +55,16 @@ public class ShindanPage implements Serializable {
 		//METAタグを取得
 		Elements meta = doc.select("meta");
 		//タイトル、説明文を取得
-		String title = meta.select("*[property=og:title]").first().attr("content");
-		String desc = meta.select("*[property=og:description]").first().attr("content");
+		Element titleElement = meta.select("*[property=og:title]").first();
+		if (titleElement == null) {
+			throw new IOException("meta[property=og:title]がHTML上に見つかりません\nURL:" + url);
+		}
+		String title = titleElement.attr("content");
+		Element descElement = meta.select("*[property=og:description]").first();
+		if (descElement == null) {
+			throw new IOException("meta[property=og:description]がHTML上に見つかりません\nURL:" + url);
+		}
+		String desc = descElement.attr("content");
 		//POST先URLを取得
 		String post = doc.select("form[id=form]").first().attr("action");
 		post = "http://shindanmaker.com" + post;
