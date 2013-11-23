@@ -45,83 +45,6 @@ public class ShindanList {
 	/** 取得モード: テーマ検索 */
 	public static final String MODE_THEME = "tag";
 
-
-	//
-	// プライベートフィールド
-	//
-
-	private String QueryMode; //最後に使用された取得モード
-	private int QueryPage; //最後に取得したページ
-	private String SearchWord; //検索ワード
-	private boolean SearchOrderByNew; //検索ソートを新着順にするか
-	private List<ShindanSummary> Results; //取得したデータのリスト
-
-	public String getQueryMode() {
-		return QueryMode;
-	}
-
-	public int getQueryPage() {
-		return QueryPage;
-	}
-
-	public List<ShindanSummary> getResults() {
-		return Results;
-	}
-
-	public String getSearchWord() {
-		return SearchWord;
-	}
-
-	public boolean isSearchOrderByNew() {
-		return SearchOrderByNew;
-	}
-	
-	
-	//
-	// コンストラクタ
-	//
-
-	public ShindanList(String queryMode, int queryPage,
-			List<ShindanSummary> results) {
-		QueryMode = queryMode;
-		QueryPage = queryPage;
-		Results = results;
-	}
-	
-	public ShindanList(String queryMode,
-			String searchWord, int queryPage,
-			boolean orderByNew,
-			List<ShindanSummary> results) {
-		QueryMode = queryMode;
-		QueryPage = queryPage;
-		SearchWord = searchWord;
-		SearchOrderByNew = orderByNew;
-		Results = results;
-	}
-	
-	
-	//
-	// インスタンスメソッド
-	
-	/**
-	 * ページカウントを1つ進めて、次のページの要素を取得します。<br>
-	 * @return 新たに取得した要素の数。IO例外等が発生した場合は-1が返る。
-	 */
-	public ShindanList getNextPage() throws IOException{
-		//GETを行う
-		Document doc = Jsoup.connect(getQuery(QueryMode, ++QueryPage))
-				.timeout(20000).get();
-		//ドキュメントから要素を抽出する
-		List<ShindanSummary> summaries = getListElements(doc);
-		//次のページを格納したオブジェクトを返す
-		return new ShindanList(QueryMode, SearchWord, QueryPage, SearchOrderByNew, summaries);
-	}
-
-	
-	//
-	// スタティックメソッド
-	//
-
 	/**
 	 * パラメータを付加したlistページのURLを取得します
 	 * @param mode 取得モード
@@ -190,13 +113,13 @@ public class ShindanList {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ShindanList getPage(String mode, int page) throws IOException {
+	public static List<ShindanSummary> getList(String mode, int page) throws IOException {
 		//GETを行う
 		Document doc = Jsoup.connect(getQuery(mode, page)).timeout(20000).get();
 		//ドキュメントから要素を抽出する
 		List<ShindanSummary> summaries = getListElements(doc);
-		//結果インスタンスを生成して返す
-		return new ShindanList(mode, page, summaries);
+		//結果を返す
+		return summaries;
 	}
 	
 	/**
@@ -207,14 +130,14 @@ public class ShindanList {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ShindanList getSearchPage(
+	public static List<ShindanSummary> getSearchResults(
 			String searchWord, int page, boolean orderByNew) throws IOException {
 		//GETを行う
 		Document doc = Jsoup.connect(getSearchQuery(searchWord, page, orderByNew)).timeout(20000).get();
 		//ドキュメントから要素を抽出する
 		List<ShindanSummary> summaries = getListElements(doc);
-		//結果インスタンスを生成して返す
-		return new ShindanList(MODE_SEARCH, searchWord, page, orderByNew, summaries);
+		//結果を返す
+		return summaries;
 	}
 	
 	/**
@@ -225,14 +148,14 @@ public class ShindanList {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ShindanList getThemeSearchPage(
+	public static List<ShindanSummary> getThemeSearchResults(
 			String searchTheme, int page, boolean orderByNew) throws IOException {
 		//GETを行う
 		Document doc = Jsoup.connect(getThemeSearchQuery(searchTheme, page, orderByNew)).timeout(20000).get();
 		//ドキュメントから要素を抽出する
 		List<ShindanSummary> summaries = getListElements(doc);
-		//結果インスタンスを生成して返す
-		return new ShindanList(MODE_THEME, searchTheme, page, orderByNew, summaries);
+		//結果を返す
+		return summaries;
 	}
 	
 	/**

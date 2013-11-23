@@ -22,62 +22,8 @@ public class AuthorPage extends ShindanList{
 	public static final String SORT_NAME    = "2";
 
 	
-	///
-	/// プライベートフィールド
-	///
-	
-	private String Author;
-	
-	private String QueryMode;
-	private int QueryPage;
-	private List<ShindanSummary> Results;
-	
-	public String getQueryMode() {
-		return QueryMode;
-	}
-
-	public int getQueryPage() {
-		return QueryPage;
-	}
-
-	public List<ShindanSummary> getResults() {
-		return Results;
-	}
-
-
 	//
-	// コンストラクタ
-	//
-
-	public AuthorPage(String author, String queryMode,
-			int queryPage, List<ShindanSummary> results) {
-		super(queryMode, queryPage, results);
-		Author = author;
-		QueryMode = queryMode;
-		QueryPage = queryPage;
-		Results = results;
-	}
-	
-	
-	//
-	// インスタンスメソッド
-	
-	/**
-	 * ページカウントを1つ進めて、次のページの要素を取得します。<br>
-	 * @return 新たに取得した要素の数。IO例外等が発生した場合は-1が返る。
-	 */
-	public ShindanList getNextPage() throws IOException{
-		//GETを行う
-		Document doc = Jsoup.connect(getQuery(Author, QueryMode, ++QueryPage))
-				.timeout(20000).get();
-		//ドキュメントから要素を抽出する
-		List<ShindanSummary> summaries = ShindanList.getListElements(doc);
-		//次のページを格納したオブジェクトを返す
-		return new AuthorPage(Author, QueryMode, QueryPage, summaries);
-	}
-
-	//
-	// スタティックメソッド
+	// メソッド
 	//
 
 	/**
@@ -103,13 +49,13 @@ public class AuthorPage extends ShindanList{
 	}
 	
 	/**
-	 * 診断メーカーの作者ページから、作者のIDと診断の一覧を取得します
+	 * 診断メーカーの作者ページから、診断の一覧を取得します
 	 * @param mode 取得モード -- データの並び順を SORT_* 定数から
 	 * @param page ページ数 -- 何ページ目を取得するか指定 (1以上の整数)
 	 * @return
 	 * @throws IOException
 	 */
-	public static AuthorPage getPage(String name, String mode, int page) throws IOException {
+	public static List<ShindanSummary> getAuthorPageResults(String name, String mode, int page) throws IOException {
 		//名前の@抜きを行う
 		if (name.startsWith("@"))
 			name = name.substring(1);
@@ -117,7 +63,7 @@ public class AuthorPage extends ShindanList{
 		Document doc = Jsoup.connect(getQuery(name, mode, page)).timeout(20000).get();
 		//ドキュメントから要素を抽出する
 		List<ShindanSummary> summaries = ShindanList.getListElements(doc);
-		//結果インスタンスを生成して返す
-		return new AuthorPage(name, mode, page, summaries);
+		//結果を返す
+		return summaries;
 	}
 }
