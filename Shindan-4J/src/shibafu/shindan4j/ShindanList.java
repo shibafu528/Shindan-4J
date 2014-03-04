@@ -208,8 +208,13 @@ public class ShindanList {
                 Elements elemHashtag = e.select("span[class=hushtag]");
                 String hashtag = ((elemHashtag != null)? elemHashtag.text() : null);
                 //概要
-                Elements elemDesc = e.select("span[class=list_description]");
-                String desc = elemDesc.text();
+                Elements elemDesc = e.select("td[class=list_description]");
+                Pattern descPattern = Pattern.compile("^(.+)\\n<div");
+                Matcher descMatcher = descPattern.matcher(elemDesc.html());
+                String desc;
+                if (descMatcher.find()) {
+                    desc = Jsoup.parseBodyFragment(descMatcher.group(1)).text();
+                } else desc = "";
                 //インスタンス作って要素リストに格納
                 assembler.setAuthor(author)
                         .setHashTag(hashtag)

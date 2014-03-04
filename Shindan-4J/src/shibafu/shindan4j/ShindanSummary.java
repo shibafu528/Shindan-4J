@@ -81,6 +81,6 @@ public class ShindanSummary implements Serializable{
 
     @Override
     public String toString() {
-        return String.format("「%s」by %s (%s)", Name, Author, PageURL);
+        return String.format("「%s」by %s (%s) / %s", Name, Author, PageURL, Description);
     }
 }
