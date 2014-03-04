@@ -79,4 +79,8 @@ public class ShindanSummary implements Serializable{
 		return Integer.parseInt(s[s.length - 1]);
 	}
 
+    @Override
+    public String toString() {
+        return String.format("「%s」by %s (%s)", Name, Author, PageURL);
+    }
 }

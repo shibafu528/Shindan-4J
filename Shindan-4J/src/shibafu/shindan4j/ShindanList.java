@@ -167,42 +167,58 @@ public class ShindanList {
 		//要素リストを作成
 		List<ShindanSummary> summaries = new ArrayList<ShindanSummary>();
 		//リストの各要素の親をとる
-		Elements items = doc.select("li[class=list_list]");
-		//各要素をパース
-		for (Element e : items) {
-			//タイトルとURL
-			Elements elemTitle = e.select("a[class=list_title]");
-			String title = elemTitle.text();
-			String url = "http://shindanmaker.com" + elemTitle.attr("href");
-			//カウンター
-			Elements elemNum = e.select("span[class=list_num]");
-			String regex = "\\d+";
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(elemNum.text().replaceAll(",", ""));
-			int counter = 0;
-			if (matcher.find()) {
-				counter = Integer.valueOf(matcher.group());
-			}
-			//作者
-			Elements elemAuthor = e.select("span[class=list_author]");
-			String author = ((elemAuthor != null)? elemAuthor.select("a").text() : null);
-			//テーマラベル
-			Elements elemTheme = e.select("a[class=themelabel]");
-			List<String> themelabel = new ArrayList<String>();
-			if (elemTheme != null) {
-				for (Element et : elemTheme) {
-					themelabel.add(et.text());
-				}
-			}
-			//ハッシュタグ
-			Elements elemHashtag = e.select("span[class=hushtag]");
-			String hashtag = ((elemHashtag != null)? elemHashtag.text() : null);
-			//概要
-			Elements elemDesc = e.select("span[class=list_description]");
-			String desc = elemDesc.text();
-			//インスタンス作って要素リストに格納
-			summaries.add(new ShindanSummary(url, title, counter, author, hashtag, themelabel, desc));
-		}
+		Elements tables = doc.select("table[class=list_list]");
+        //各要素をパース
+        //  2014/3/4以降ページ構造変化により、trタグ2つで1組となった、めんどくさい
+        SummaryAssembler assembler = null;
+        for (Element e : tables.select("tr")) {
+            if (assembler == null) {
+                //タイトルとURL
+                Elements elemTitle = e.select("a[class=list_title]");
+                String title = elemTitle.text();
+                String url = "http://shindanmaker.com" + elemTitle.attr("href");
+                //カウンター
+                Elements elemNum = e.select("span[class=list_num]");
+                String regex = "\\d+";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(elemNum.text().replaceAll(",", ""));
+                int counter = 0;
+                if (matcher.find()) {
+                    counter = Integer.valueOf(matcher.group());
+                }
+                //組立機に突っ込む
+                assembler = new SummaryAssembler()
+                        .setPageURL(url)
+                        .setName(title)
+                        .setCounter(counter);
+            }
+            else {
+                //作者
+                Elements elemAuthor = e.select("span[class=list_author]");
+                String author = ((elemAuthor != null)? elemAuthor.select("a").text() : null);
+                //テーマラベル
+                Elements elemTheme = e.select("a[class=themelabel]");
+                List<String> themelabel = new ArrayList<String>();
+                if (elemTheme != null) {
+                    for (Element et : elemTheme) {
+                        themelabel.add(et.text());
+                    }
+                }
+                //ハッシュタグ
+                Elements elemHashtag = e.select("span[class=hushtag]");
+                String hashtag = ((elemHashtag != null)? elemHashtag.text() : null);
+                //概要
+                Elements elemDesc = e.select("span[class=list_description]");
+                String desc = elemDesc.text();
+                //インスタンス作って要素リストに格納
+                assembler.setAuthor(author)
+                        .setHashTag(hashtag)
+                        .setThemeLabel(themelabel)
+                        .setDescription(desc);
+                summaries.add(assembler.create());
+                assembler = null;
+            }
+        }
 		return summaries;
 	}
 }
